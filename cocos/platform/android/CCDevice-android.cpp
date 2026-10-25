@@ -23,10 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-
-#include "platform/CCPlatformConfig.h"
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-
 #include "platform/CCDevice.h"
 #include <string.h>
 #include <android/log.h>
@@ -35,7 +31,7 @@ THE SOFTWARE.
 #include "platform/android/jni/JniHelper.h"
 #include "platform/CCFileUtils.h"
 
-static const std::string helperClassName = "org/cocos2dx/lib/Cocos2dxHelper";
+static const std::string helperClassName = "org.cocos2dx.lib.Cocos2dxHelper";
 
 NS_CC_BEGIN
 
@@ -77,7 +73,7 @@ public:
     {
     }
 
-    ~BitmapDC(void)
+    ~BitmapDC()
     {
     }
 
@@ -88,7 +84,7 @@ public:
                       const FontDefinition& textDefinition )
     {
            JniMethodInfo methodInfo;
-           if (! JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/lib/Cocos2dxBitmap", "createTextBitmapShadowStroke",
+           if (! JniHelper::getStaticMethodInfo(methodInfo, "org.cocos2dx.lib.Cocos2dxBitmap", "createTextBitmapShadowStroke",
                "([BLjava/lang/String;IIIIIIIIZFFFFZIIIIFZI)Z"))
            {
                CCLOG("%s %d: error to get methodInfo", __FILE__, __LINE__);
@@ -183,8 +179,6 @@ void Device::vibrate(float duration)
 }
 
 NS_CC_END
-
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 
 // this method is called by Cocos2dxBitmap
 extern "C"

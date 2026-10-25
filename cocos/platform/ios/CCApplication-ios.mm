@@ -23,10 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
 #import "CCApplication.h"
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 
 #import <UIKit/UIKit.h>
 
@@ -64,11 +61,6 @@ void Application::setAnimationInterval(float interval)
     [[CCDirectorCaller sharedDirectorCaller] setAnimationInterval: interval ];
 }
 
-void Application::setAnimationInterval(float interval, SetIntervalReason reason)
-{
-    setAnimationInterval(interval);
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // static member function
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,12 +69,6 @@ Application* Application::getInstance()
 {
     CC_ASSERT(sm_pSharedApplication);
     return sm_pSharedApplication;
-}
-
-// @deprecated Use getInstance() instead
-Application* Application::sharedApplication()
-{
-    return Application::getInstance();
 }
 
 const char * Application::getCurrentLanguageCode()
@@ -117,7 +103,7 @@ LanguageType Application::getCurrentLanguage()
 
 Application::Platform Application::getTargetPlatform()
 {
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) // idiom for iOS <= 3.2, otherwise: [UIDevice userInterfaceIdiom] is faster.
+    if ([UIDevice.currentDevice userInterfaceIdiom] == UIUserInterfaceIdiomPad) // idiom for iOS <= 3.2, otherwise: [UIDevice userInterfaceIdiom] is faster.
     {
         return Platform::OS_IPAD;
     }
@@ -139,7 +125,16 @@ bool Application::openURL(const std::string &url)
 {
     NSString* msg = [NSString stringWithCString:url.c_str() encoding:NSUTF8StringEncoding];
     NSURL* nsUrl = [NSURL URLWithString:msg];
-    return [[UIApplication sharedApplication] openURL:nsUrl];
+    
+    id application = [UIApplication sharedApplication];
+    if ([application respondsToSelector:@selector(openURL:options:completionHandler:)] )
+    {
+        [application openURL:nsUrl options:@{} completionHandler:nil];
+    }
+    else
+    {
+        return [application openURL:nsUrl];
+    }
 }
 
 void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
@@ -147,5 +142,3 @@ void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 }
 
 NS_CC_END
-
-#endif // CC_PLATFORM_IOS

@@ -47,22 +47,51 @@ public:
     void menuResumeCallback(cocos2d::Ref* sender);
     void menuStopCallback(cocos2d::Ref* sender);
     void menuHintCallback(cocos2d::Ref* sender);
+    void menuLoopCallback(cocos2d::Ref* sender);
     
     void sliderCallback(cocos2d::Ref* sender, cocos2d::ui::Slider::EventType eventType);
 
-    void videoEventCallback(cocos2d::Ref* sender, cocos2d::experimental::ui::VideoPlayer::EventType eventType);
+    void videoEventCallback(cocos2d::Ref* sender, cocos2d::ui::VideoPlayer::EventType eventType);
 
 private:
     void createVideo();
     void createSlider();
 
-    cocos2d::MenuItemFont* _hintItem;
-    cocos2d::experimental::ui::VideoPlayer* _videoPlayer;
+    cocos2d::ui::VideoPlayer* _videoPlayer;
     cocos2d::Label* _videoStateLabel;
+    cocos2d::Label* _loopStatusLabel;
     cocos2d::Rect _visibleRect;
-
-    cocos2d::Layer* _rootLayer;
-
 };
+
+
+class SimpleVideoPlayerTest : public UIScene
+{
+public:
+    CREATE_FUNC(SimpleVideoPlayerTest);
+    
+    SimpleVideoPlayerTest();
+    
+    virtual bool init() override;
+    
+    void menuCloseCallback(cocos2d::Ref* sender);
+    void switchStyleCallback(cocos2d::Ref* sender);
+    void switchUserInputCallback(cocos2d::Ref* sender);
+    
+private:
+    void createVideo();
+    
+    cocos2d::Rect _visibleRect;
+    cocos2d::ui::VideoPlayer* _videoPlayer;
+    
+    cocos2d::MenuItemFont*   _switchUserInputEnabled;
+    cocos2d::MenuItemFont*   _switchStyle;
+    
+    
+    bool _userInputEnabled;
+    cocos2d::ui::VideoPlayer::StyleType _style;
+    
+    void updateButtonsTexts();
+};
+
 
 #endif // __tests__VideoPlayerTest__

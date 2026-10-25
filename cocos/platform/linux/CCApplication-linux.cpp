@@ -23,10 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-
-#include "platform/CCPlatformConfig.h"
-#if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-
 #include "platform/linux/CCApplication-linux.h"
 #include <unistd.h>
 #include <sys/time.h>
@@ -115,11 +111,6 @@ void Application::setAnimationInterval(float interval)
     _animationInterval = interval*1000.0f;
 }
 
-void Application::setAnimationInterval(float interval, SetIntervalReason reason)
-{
-    setAnimationInterval(interval);
-}
-
 void Application::setResourceRootPath(const std::string& rootResDir)
 {
     _resourceRootPath = rootResDir;
@@ -133,7 +124,7 @@ void Application::setResourceRootPath(const std::string& rootResDir)
     pFileUtils->setSearchPaths(searchPaths);
 }
 
-const std::string& Application::getResourceRootPath(void)
+const std::string& Application::getResourceRootPath()
 {
     return _resourceRootPath;
 }
@@ -200,6 +191,3 @@ LanguageType Application::getCurrentLanguage()
 }
 
 NS_CC_END
-
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-

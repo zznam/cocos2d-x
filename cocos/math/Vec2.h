@@ -58,12 +58,12 @@ public:
     /**
      * The x coordinate.
      */
-    float x;
+    float x = 0.f;
 
     /**
      * The y coordinate.
      */
-    float y;
+    float y = 0.f;
 
     /**
      * Constructs a new vector initialized to all zeros.
@@ -92,18 +92,6 @@ public:
      * @param p2 The second point.
      */
     Vec2(const Vec2& p1, const Vec2& p2);
-
-    /**
-     * Constructs a new vector that is a copy of the specified vector.
-     *
-     * @param copy The vector to copy.
-     */
-    Vec2(const Vec2& copy);
-
-    /**
-     * Destructor.
-     */
-    ~Vec2();
 
     /**
      * Indicates whether this vector contains all zeros.

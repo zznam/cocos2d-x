@@ -23,11 +23,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-
-#include "platform/CCPlatformConfig.h"
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-
-#include "platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxEngineDataManager.h"
 #include "platform/android/jni/JniHelper.h"
 #include "platform/CCApplication.h"
 #include "base/CCDirector.h"
@@ -47,7 +42,7 @@ extern "C" size_t __ctype_get_mb_cur_max(void) {
 }
 #endif
 
-static const std::string helperClassName = "org/cocos2dx/lib/Cocos2dxHelper";
+static const std::string helperClassName = "org.cocos2dx.lib.Cocos2dxHelper";
 
 NS_CC_BEGIN
 
@@ -79,12 +74,7 @@ int Application::run()
 
 void Application::setAnimationInterval(float interval)
 {
-    setAnimationInterval(interval, SetIntervalReason::BY_ENGINE);
-}
-
-void Application::setAnimationInterval(float interval, SetIntervalReason reason)
-{
-    EngineDataManager::setAnimationInterval(interval, reason);
+    JniHelper::callStaticVoidMethod("org/cocos2dx/lib/Cocos2dxRenderer", "setAnimationInterval", interval);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -138,5 +128,3 @@ void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 }
 
 NS_CC_END
-
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

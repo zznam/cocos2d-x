@@ -23,11 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#ifndef __CC_APPLICATION_WIN32_H__
-#define __CC_APPLICATION_WIN32_H__
-
-#include "platform/CCPlatformConfig.h"
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#pragma once
 
 #include "platform/CCStdC.h"
 #include "platform/CCCommon.h"
@@ -35,8 +31,6 @@ THE SOFTWARE.
 #include <string>
 
 NS_CC_BEGIN
-
-class Rect;
 
 class CC_DLL Application : public ApplicationProtocol
 {
@@ -61,13 +55,9 @@ public:
     @return Current application instance pointer.
     */
     static Application* getInstance();
-
-    /** @deprecated Use getInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
     
     /* override functions */
     virtual void setAnimationInterval(float interval) override;
-    virtual void setAnimationInterval(float interval, SetIntervalReason reason) override;
 
     virtual LanguageType getCurrentLanguage();
 
@@ -100,11 +90,11 @@ public:
      *  Gets the Resource root path.
      *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
      */
-    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath(void);
+    CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath();
 
     void setStartupScriptFilename(const std::string& startupScriptFile);
 
-    const std::string& getStartupScriptFilename(void)
+    const std::string& getStartupScriptFilename()
     {
         return _startupScriptFilename;
     }
@@ -120,7 +110,3 @@ protected:
 };
 
 NS_CC_END
-
-#endif // CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-
-#endif    // __CC_APPLICATION_WIN32_H__

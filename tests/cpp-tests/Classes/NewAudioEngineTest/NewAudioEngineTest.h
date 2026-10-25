@@ -111,7 +111,7 @@ public:
 private:
     static const int FILE_COUNT = 2;
     std::string _files[FILE_COUNT];
-    cocos2d::experimental::AudioProfile _audioProfile;
+    cocos2d::AudioProfile _audioProfile;
     
     int _audioCount;
     cocos2d::Label* _showLabel;
@@ -159,6 +159,19 @@ public:
     virtual bool init() override;
 
     virtual std::string title() const override;
+};
+
+class AudioIssue18597Test : public AudioEngineTestDemo
+{
+public:
+    CREATE_FUNC(AudioIssue18597Test);
+
+    float _time;
+
+    virtual bool init() override;
+
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
 };
 
 class AudioIssue11143Test : public AudioEngineTestDemo
