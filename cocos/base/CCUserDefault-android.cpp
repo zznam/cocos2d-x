@@ -44,7 +44,7 @@ THE SOFTWARE.
 #include "tinyxml2.h"
 #endif
 
-static const std::string helperClassName = "org/cocos2dx/lib/Cocos2dxHelper";
+static const std::string helperClassName = "org.cocos2dx.lib.Cocos2dxHelper";
 
 using namespace std;
 NS_CC_BEGIN
@@ -148,11 +148,7 @@ UserDefault::UserDefault()
 {
 }
 
-// FIXME:: deprecated
-void UserDefault::purgeSharedUserDefault()
-{
-    UserDefault::destroyInstance();
-}
+
 
 void UserDefault::destroyInstance()
 {
@@ -470,11 +466,6 @@ void UserDefault::setDataForKey(const char* pKey, const Data& value)
         free(encodedData);
 }
 
-// FIXME:: deprecated
-UserDefault* UserDefault::sharedUserDefault()
-{
-    return UserDefault::getInstance();
-}
 
 UserDefault* UserDefault::getInstance()
 {

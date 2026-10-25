@@ -29,10 +29,11 @@
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
-#include <string>
-#include <mutex>
-#include <vector>
+#include <functional>
 #include <memory>
+#include <mutex>
+#include <string>
+#include <vector>
 #ifdef OPENAL_PLAIN_INCLUDES
 #include <al.h>
 #else
@@ -42,7 +43,6 @@
 #include "audio/win32/AudioMacros.h"
 
 NS_CC_BEGIN
-namespace experimental{
 
 class AudioEngineImpl;
 class AudioPlayer;
@@ -114,7 +114,6 @@ protected:
     friend class AudioPlayer;
 };
 
-}
 NS_CC_END
 
 #endif

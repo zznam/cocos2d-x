@@ -27,16 +27,12 @@
 # this CMakeLists is to generate Cocos2d-x Engine Library
 # build libcocos2d
 # build luacocos2d if BUILD_LUA_LIBS=ON
-# build jscocos2d if BUILD_JS_LIBS=ON
 
 # The version number
-set(COCOS2D_X_VERSION 3.17)
+set(COCOS2D_X_VERSION 4.0)
 
 set(COCOS_CORE_LIB cocos2d)
-
-if(WINDOWS)
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
+project(cocos2d_libs)
 
 include(2d/CMakeLists.txt)
 include(3d/CMakeLists.txt)
@@ -46,18 +42,15 @@ include(physics3d/CMakeLists.txt)
 include(math/CMakeLists.txt)
 include(navmesh/CMakeLists.txt)
 include(renderer/CMakeLists.txt)
-include(vr/CMakeLists.txt)
 include(base/CMakeLists.txt)
-include(deprecated/CMakeLists.txt)
 include(ui/CMakeLists.txt)
 include(network/CMakeLists.txt)
 include(audio/CMakeLists.txt)
-include(storage/CMakeLists.txt)
 
-if(BUILD_EDITOR_COCOSBUILDER)
-    include(editor-support/cocosbuilder/CMakeLists.txt)
-    set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CCB_SRC} ${COCOS_CCB_HEADER})
-endif(BUILD_EDITOR_COCOSBUILDER)
+# default value for cocos2dx extensions modules build
+option(BUILD_EDITOR_COCOSTUDIO "Build editor support for cocostudio" ON)
+option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
+option(BUILD_EXTENSIONS "Build extension library" ON)
 
 if(BUILD_EDITOR_COCOSTUDIO)
     include(editor-support/cocostudio/CMakeLists.txt)
@@ -65,7 +58,11 @@ if(BUILD_EDITOR_COCOSTUDIO)
 endif(BUILD_EDITOR_COCOSTUDIO)
 
 if(BUILD_EDITOR_SPINE)
-    include(editor-support/spine/CMakeLists.txt)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/editor-support/spine/CMakeLists.txt")
+        include(editor-support/spine/CMakeLists.txt)
+    else()
+        message(WARNING "${CMAKE_CURRENT_SOURCE_DIR}/editor-support/spine/CMakeLists.txt not found!")
+    endif()
     set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_SPINE_SRC} ${COCOS_SPINE_HEADER})
 endif(BUILD_EDITOR_SPINE)
 
@@ -82,15 +79,12 @@ set(COCOS_HEADER cocos2d.h
     ${COCOS_MATH_HEADER}
     ${COCOS_NAVMESH_HEADER}
     ${COCOS_RENDERER_HEADER}
-    ${COCOS_VR_HEADER}
     ${COCOS_BASE_HEADER}
     ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
-    ${COCOS_DEPRECATED_HEADER}
     ${COCOS_NETWORK_HEADER}
     ${COCOS_EDITOR_SUPPORT_HEADER}
     ${COCOS_EXTENSIONS_HEADER}
-    ${COCOS_STORAGE_HEADER}
     )
 
 set(COCOS_SRC cocos2d.cpp
@@ -102,28 +96,40 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_MATH_SRC}
     ${COCOS_NAVMESH_SRC}
     ${COCOS_RENDERER_SRC}
-    ${COCOS_VR_SRC}
     ${COCOS_BASE_SRC}
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
-    ${COCOS_DEPRECATED_SRC}
     ${COCOS_NETWORK_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
     ${COCOS_STORAGE_SRC}
     )
 
-#todo: provide prebuild versions of the xx libs for all platforms
-include_directories(../external/xxtea)
-include_directories(../external/clipper)
-
 list(APPEND COCOS_SRC ${COCOS_HEADER})
 
 add_library(cocos2d ${COCOS_SRC})
 
-# use necessary external libs and system libs
-include(CocosUseLibs)
-target_use_cocos2d_depend_libs(cocos2d)
+# use external libs
+add_subdirectory(${COCOS2DX_ROOT_PATH}/external ${ENGINE_BINARY_PATH}/external)
+target_link_libraries(cocos2d external)
+
+# add base macro define and compile options
+use_cocos2dx_compile_define(cocos2d)
+use_cocos2dx_compile_options(cocos2d)
+
+# use all platform related system libs
+use_cocos2dx_libs_depend(cocos2d)
+
+target_include_directories(cocos2d
+    PUBLIC ${COCOS2DX_ROOT_PATH}
+    PUBLIC ${COCOS2DX_ROOT_PATH}/cocos
+    PUBLIC ${COCOS2DX_ROOT_PATH}/extensions
+    PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/platform
+    PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/editor-support
+    INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
+    INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
+    INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/platform/${PLATFORM_FOLDER}
+)
 
 set_target_properties(cocos2d
                       PROPERTIES
@@ -133,45 +139,23 @@ set_target_properties(cocos2d
                       FOLDER "Internal"
                       )
 
-# set custom target: prebuilt, to copy all libs to prebuilt libs folder
-if(GEN_COCOS_PREBUILT)
-    add_custom_target(prebuilt ALL)
-    add_dependencies(prebuilt cocos2d)
-    set_target_properties(prebuilt
-                          PROPERTIES
-                          FOLDER "Internal"
-                          )
-    add_custom_command(TARGET "prebuilt"
-                       POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       "${CMAKE_BINARY_DIR}/lib"
-                       "${COCOS_PREBUILT_PATH}"
-                       COMMENT "copy library directory:${CMAKE_BINARY_DIR}/lib to directory:${COCOS_PREBUILT_PATH}"
-                       )
-    if(BUILD_LUA_LIBS)
-        add_dependencies(prebuilt luacocos2d)
-    endif()
-    if(BUILD_JS_LIBS)
-        add_dependencies(prebuilt jscocos2d)
-    endif()
-    if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-        add_dependencies(prebuilt simulator)
-    endif()
-endif()
-
 ## Lua bindings lib
 if(BUILD_LUA_LIBS)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
-endif()
-## JS bindings lib
-if(BUILD_JS_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/js-bindings ${ENGINE_BINARY_PATH}/cocos/js-bindings)
-endif()
-# simulator
-if(BUILD_SIMU_LIB AND (MACOSX OR WINDOWS))
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/tools/simulator/libsimulator ${ENGINE_BINARY_PATH}/cocos/libsimulator)
 endif()
 
 if(XCODE OR VS)
     cocos_mark_code_files("cocos2d")
 endif()
+
+if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
+    message("CMake 3.16 target_precompile_headers")
+    target_precompile_headers(cocos2d PRIVATE 
+       "$<$<COMPILE_LANGUAGE:CXX>:cocos2d.h>")
+endif()
+
+#if(XCODE)
+#    # Later versions of Xcode clang want to compile C++17 with aligned allocation turned on and this is only supported on iOS 11.0+
+#    # TODO: Only turn this off if ${CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET} < 11.0
+#    target_compile_options(cocos2d PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-aligned-allocation>)
+#endif()

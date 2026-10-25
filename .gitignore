@@ -166,3 +166,19 @@ tests/lua-tests/project/proj.tizen/res/
 *-build/
 # Ignore the CLion build folder, such as cmake-build-debug
 cmake-build-*/
+.vs
+cmake_build*
+metal-support*.zip
+**/.project
+
+**/.classpath
+**/org.eclipse.buildship.core.prefs
+
+desktop.ini
+# tmp folder for temp usage
+tmp/
+temp/
+
+# external libs zip
+*.zip
+**/simulator/

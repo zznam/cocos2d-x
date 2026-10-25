@@ -38,7 +38,6 @@ public:
     virtual bool init() override;
     
     virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox)override;
-    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox)override;
     virtual void editBoxEditingDidEndWithAction(cocos2d::ui::EditBox* editBox, cocos2d::ui::EditBoxDelegate::EditBoxEndAction action)override;
     virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text)override;
     virtual void editBoxReturn(cocos2d::ui::EditBox* editBox)override;
@@ -60,7 +59,6 @@ public:
     virtual bool init() override;
     
     virtual void editBoxEditingDidBegin(cocos2d::ui::EditBox* editBox)override;
-    virtual void editBoxEditingDidEnd(cocos2d::ui::EditBox* editBox)override;
     virtual void editBoxTextChanged(cocos2d::ui::EditBox* editBox, const std::string& text)override;
     virtual void editBoxReturn(cocos2d::ui::EditBox* editBox)override;
     
@@ -78,6 +76,13 @@ class UIEditBoxTestTextHorizontalAlignment : public UIScene
 public:
     CREATE_FUNC(UIEditBoxTestTextHorizontalAlignment);
     
+    virtual bool init() override;
+};
+
+class UIEditBoxTestPressedAndDisabled : public UIScene
+{
+public:
+    CREATE_FUNC(UIEditBoxTestPressedAndDisabled);
     virtual bool init() override;
 };
 

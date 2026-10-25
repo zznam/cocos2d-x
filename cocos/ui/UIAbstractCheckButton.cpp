@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "ui/UIAbstractCheckButton.h"
 #include "2d/CCSprite.h"
 #include "editor-support/cocostudio/CocosStudioExtension.h"
+#include "renderer/ccShaders.h"
 
 NS_CC_BEGIN
 
@@ -173,7 +174,8 @@ void AbstractCheckButton::loadTextureBackGroundSelected(const std::string& backG
 {
     _backGroundSelectedFileName = backGroundSelected;
     _isBackgroundSelectedTextureLoaded = !backGroundSelected.empty();
-
+    if (!_isBackgroundSelectedTextureLoaded) return;
+    
     _backGroundSelectedTexType = texType;
     switch (_backGroundSelectedTexType)
     {
@@ -236,6 +238,7 @@ void AbstractCheckButton::loadTextureBackGroundDisabled(const std::string& backG
 {
     _backGroundDisabledFileName = backGroundDisabled;
     _isBackgroundDisabledTextureLoaded = !backGroundDisabled.empty();
+    if (!_isBackgroundDisabledTextureLoaded) return;
 
     _backGroundDisabledTexType = texType;
     switch (_backGroundDisabledTexType)
@@ -269,6 +272,7 @@ void AbstractCheckButton::loadTextureFrontCrossDisabled(const std::string& front
 {
     _frontCrossDisabledFileName = frontCrossDisabled;
     _isFrontCrossDisabledTextureLoaded = !frontCrossDisabled.empty();
+    if (!_isFrontCrossDisabledTextureLoaded) return;
 
     _frontCrossDisabledTexType = texType;
     switch (_frontCrossDisabledTexType)
@@ -305,8 +309,11 @@ void AbstractCheckButton::onPressStateChangedToNormal()
     _backGroundBoxDisabledRenderer->setVisible(false);
     _frontCrossDisabledRenderer->setVisible(false);
     
-    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState(_backGroundBoxRenderer->getTexture()));
-    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState(_frontCrossRenderer->getTexture()));
+    auto isETC1 = _backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->getAlphaTextureName();
+    _backGroundBoxRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+    
+    isETC1 = _frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->getAlphaTextureName();
+    _frontCrossRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
     
     
     _backGroundBoxRenderer->setScale(_backgroundTextureScaleX, _backgroundTextureScaleY);
@@ -322,8 +329,11 @@ void AbstractCheckButton::onPressStateChangedToNormal()
 
 void AbstractCheckButton::onPressStateChangedToPressed()
 {
-    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState(_backGroundBoxRenderer->getTexture()));
-    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState(_frontCrossRenderer->getTexture()));
+    auto isETC1 = _backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->getAlphaTextureName();
+    _backGroundBoxRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
+    
+    isETC1 = _frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->getAlphaTextureName();
+    _frontCrossRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1_frag:positionTextureColor_frag);
     
     if (!_isBackgroundSelectedTextureLoaded)
     {
@@ -346,8 +356,11 @@ void AbstractCheckButton::onPressStateChangedToDisabled()
     if (!_isBackgroundDisabledTextureLoaded
         || !_isFrontCrossDisabledTextureLoaded)
     {
-        _backGroundBoxRenderer->setGLProgramState(this->getGrayGLProgramState(_backGroundBoxRenderer->getTexture()));
-        _frontCrossRenderer->setGLProgramState(this->getGrayGLProgramState(_backGroundBoxRenderer->getTexture()));
+        auto isETC1 = _backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->getAlphaTextureName();
+        _backGroundBoxRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1Gray_frag:grayScale_frag);
+        
+        isETC1 = _frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->getAlphaTextureName();
+        _frontCrossRenderer->updateShaders(positionTextureColor_vert, (isETC1)?etc1Gray_frag:grayScale_frag);
     }
     else
     {

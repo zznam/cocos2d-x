@@ -115,17 +115,6 @@ public:
     virtual std::string subtitle() const override;
 };
 
-class TextWritePlist : public FileUtilsDemo
-{
-public:
-    CREATE_FUNC(TextWritePlist);
-
-    virtual void onEnter() override;
-    virtual void onExit() override;
-    virtual std::string title() const override;
-    virtual std::string subtitle() const override;
-};
-
 class TestWriteString : public FileUtilsDemo
 {
 public:
@@ -252,6 +241,28 @@ class TestWriteDataAsync : public FileUtilsDemo
 public:
     CREATE_FUNC(TestWriteDataAsync);
     
+    virtual void onEnter() override;
+    virtual void onExit() override;
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class TestListFiles : public FileUtilsDemo
+{
+public:
+    CREATE_FUNC(TestListFiles);
+
+    virtual void onEnter() override;
+    virtual void onExit() override;
+    virtual std::string title() const override;
+    virtual std::string subtitle() const override;
+};
+
+class TestIsFileExistRejectFolder : public FileUtilsDemo
+{
+public:
+    CREATE_FUNC(TestIsFileExistRejectFolder);
+
     virtual void onEnter() override;
     virtual void onExit() override;
     virtual std::string title() const override;
